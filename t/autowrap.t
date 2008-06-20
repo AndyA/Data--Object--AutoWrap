@@ -1,8 +1,10 @@
 #!perl
 use strict;
 use warnings;
-use Test::More tests => 11;
+use Test::More tests => 12;
 use Test::Deep;
+use lib qw( t/lib );
+use Utils;
 
 package MyData;
 use Data::Object::AutoWrap qw( data );
@@ -17,19 +19,20 @@ sub new {
 package main;
 
 {
-    ok my $d = MyData->new(
-        {
-            one   => 1,
-            two   => 2,
-            three => 3,
-            hash  => {
-                smaller => '><',
-                larger  => '<>',
-            },
-        }
-      ),
-      'new';
+    my $data = {
+        one   => 1,
+        two   => 2,
+        three => 3,
+        hash  => {
+            smaller => '><',
+            larger  => '<>',
+        },
+    };
 
+    my $snap = bake( $data );
+    # diag $snap;
+    ok my $d = MyData->new( $data ), 'new';
+    # diag bake( $d );
     isa_ok $d, 'MyData';
     is $d->one,   1, 'one';
     is $d->two,   2, 'two';
@@ -45,6 +48,8 @@ package main;
 
     is $d->hash->smaller, '><', 'smaller';
     is $d->hash->larger,  '<>', 'larger';
+
+    is bake( $data ), $snap, 'data unmolested';
 
     # TODO: Why doesn't this work?
     # cmp_deeply( $d, methods( one => 1, two => 2, three => 3 ) );
