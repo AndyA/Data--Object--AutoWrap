@@ -24,13 +24,13 @@ package main;
         two   => 2,
         three => 3,
         hash  => {
-            smaller => '><',
-            larger  => '<>',
+            smaller => '>|<',
+            larger  => '< >',
         },
     };
 
     my $snap = bake( $data );
-    # diag $snap;
+    diag $snap;
     ok my $d = MyData->new( $data ), 'new';
     # diag bake( $d );
     isa_ok $d, 'MyData';
