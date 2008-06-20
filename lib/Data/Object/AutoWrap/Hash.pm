@@ -1,29 +1,73 @@
-Data-Object-AutoWrap version 0.01
+package Data::Object::AutoWrap::Hash;
 
-INSTALLATION
+use warnings;
+use strict;
+use Data::Object::AutoWrap qw( data );
 
-To install this module, run the following commands:
+=head1 NAME
 
-	perl Makefile.PL
-	make
-	make test
-	make install
+Data::Object::AutoWrap::Hash - Autogenerate accessors for R/O object data
 
-Alternatively, to install with Module::Build, you can use the following commands:
+=head1 VERSION
 
-	perl Build.PL
-	./Build
-	./Build test
-	./Build install
+This document describes Data::Object::AutoWrap::Hash version 0.01
 
-DEPENDENCIES
+=cut
+
+our $VERSION = '0.01';
+
+=head1 SYNOPSIS
+
+    use Data::Object::AutoWrap::Hash;
+  
+=head1 DESCRIPTION
+
+=head1 INTERFACE 
+
+=head2 C<< new >>
+
+=cut
+
+sub new {
+    my ( $class, $data ) = @_;
+    bless { data => $data }, $class;
+}
+
+1;
+
+# vim:ts=4:sw=4:et:ft=perl:
+
+__END__
+
+=head1 CONFIGURATION AND ENVIRONMENT
+  
+Data::Object::AutoWrap::Hash requires no configuration files or
+environment variables.
+
+=head1 DEPENDENCIES
 
 None.
 
-COPYRIGHT AND LICENCE
+=head1 INCOMPATIBILITIES
 
-This module is free software; you can redistribute it and/or
-modify it under the same terms as Perl itself. See L<perlartistic>.
+None reported.
+
+=head1 BUGS AND LIMITATIONS
+
+No bugs have been reported.
+
+Please report any bugs or feature requests to
+C<bug-data-object-autowrap@rt.cpan.org>, or through the web interface at
+L<http://rt.cpan.org>.
+
+=head1 AUTHOR
+
+Andy Armstrong  C<< <andy.armstrong@messagesystems.com> >>
+
+=head1 LICENCE AND COPYRIGHT
+
+This module is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself. See L<perlartistic>.
 
 Copyright (c) 2008, Message Systems, Inc.
 All rights reserved.

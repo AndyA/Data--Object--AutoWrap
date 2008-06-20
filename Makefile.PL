@@ -14,7 +14,10 @@ WriteMakefile(
     PL_FILES      => {},
     PREREQ_PM     => {
         'Test::More' => 0,
+        'Test::Deep' => 0,
     },
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean => { FILES    => 'Data-Object-AutoWrap-*' },
 );
+
+# vim:ts=4:sw=4:et:ft=perl:
