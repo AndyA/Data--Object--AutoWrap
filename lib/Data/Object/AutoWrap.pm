@@ -55,6 +55,7 @@ sub import {
                 # attempts to use us.
                 eval 'require Data::Object::AutoWrap::Hash';
                 die $@ if $@;
+                # TODO: Just bless (a copy of) the hash?
                 return sub {
                     Data::Object::AutoWrap::Hash->new( $value );
                 };
