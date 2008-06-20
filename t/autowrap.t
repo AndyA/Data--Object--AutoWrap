@@ -7,9 +7,9 @@ use lib qw( t/lib );
 use Utils;
 
 package MyData;
-use Data::Object::AutoWrap qw( data );
 use strict;
 use warnings;
+use Data::Object::AutoWrap qw( data );
 
 sub new {
     my ( $class, $data ) = @_;
@@ -30,7 +30,7 @@ package main;
     };
 
     my $snap = bake( $data );
-    diag $snap;
+    # diag $snap;
     ok my $d = MyData->new( $data ), 'new';
     # diag bake( $d );
     isa_ok $d, 'MyData';
@@ -44,10 +44,10 @@ package main;
 
     ok my $hash = $d->hash, 'hash';
     isa_ok $hash, 'Data::Object::AutoWrap::Hash';
-    is $hash->smaller, '><', 'smaller';
+    is $hash->smaller, '>|<', 'smaller';
 
-    is $d->hash->smaller, '><', 'smaller';
-    is $d->hash->larger,  '<>', 'larger';
+    is $d->hash->smaller, '>|<', 'smaller';
+    is $d->hash->larger,  '< >', 'larger';
 
     is bake( $data ), $snap, 'data unmolested';
 
