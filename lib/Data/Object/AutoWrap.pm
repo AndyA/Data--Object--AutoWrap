@@ -2,7 +2,7 @@ package Data::Object::AutoWrap;
 
 use warnings;
 use strict;
-use Carp qw( confess );
+use Carp qw( confess croak );
 
 # use Data::Object::AutoWrap::Hash;
 
@@ -30,6 +30,45 @@ our $VERSION = '0.01';
 
 =cut
 
+sub _make_value_handler {
+    my ( $class, $value ) = @_;
+    if ( 'HASH' eq ref $value ) {
+        # Delay loading so we're compiled before wrapper
+        # attempts to use us.
+        eval 'require Data::Object::AutoWrap::Hash';
+        die $@ if $@;
+        # TODO: Just bless (a copy of) the hash?
+        return sub {
+            my $self = shift;
+            if ( @_ ) {
+                my $key = shift;
+                return $class->_make_value_handler( $value->{$key} )
+                  ->( $self, @_ );
+            }
+            else {
+                return Data::Object::AutoWrap::Hash->new( $value );
+            }
+        };
+    }
+    elsif ( 'ARRAY' eq ref $value ) {
+        return sub {
+            my $self = shift;
+            croak "Array accessor needs an index"
+              unless @_;
+            my $idx = shift;
+            return $class->_make_value_handler( $value->[$idx] )
+              ->( $self, @_ );
+        };
+    }
+    else {
+        return sub {
+            my $self = shift;
+            croak "Scalar accessor doesn't take an argument" if @_;
+            return $value;
+        };
+    }
+}
+
 sub import {
     my $class = shift;
     my $pkg   = caller;
@@ -48,25 +87,11 @@ sub import {
     *{"${pkg}::can"} = sub {
         my ( $self, $method ) = @_;
         my $data = $get_data->( $self );
-        if ( exists $data->{$method} ) {
-            my $value = $data->{$method};
-            if ( 'HASH' eq ref $value ) {
-                # Delay loading so we're compiled before wrapper
-                # attempts to use us.
-                eval 'require Data::Object::AutoWrap::Hash';
-                die $@ if $@;
-                # TODO: Just bless (a copy of) the hash?
-                return sub {
-                    Data::Object::AutoWrap::Hash->new( $value );
-                };
-            }
-            else {
-                return sub { $value };
-            }
-        }
-        else {
-            return $self->SUPER::can( $method );
-        }
+        # TODO: can inheritance is wrong
+        return
+          exists $data->{$method}
+          ? $class->_make_value_handler( $data->{$method} )
+          : $pkg->SUPER::can( $method );
     };
 
     our $AUTOLOAD;
@@ -75,7 +100,7 @@ sub import {
         ( my $field = $AUTOLOAD ) =~ s/.*://;
         return if $field eq 'DESTROY';
         if ( my $code = $self->can( $field ) ) {
-            return $self->$code();
+            return $self->$code( @_ );
         }
 
         confess "Undefined subroutine &$AUTOLOAD called";

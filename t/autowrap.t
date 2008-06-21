@@ -1,7 +1,7 @@
 #!perl
 use strict;
 use warnings;
-use Test::More tests => 12;
+use Test::More tests => 27;
 use Test::Deep;
 use lib qw( t/lib );
 use Utils;
@@ -19,6 +19,7 @@ sub new {
 package main;
 
 {
+    my $chunk = { name => 'chunk', hours => [ 3, 6, 9, 12 ] };
     my $data = {
         one   => 1,
         two   => 2,
@@ -27,13 +28,25 @@ package main;
             smaller => '>|<',
             larger  => '< >',
         },
+        array => [
+            1, 'string',
+            {
+                here  => 'there',
+                array => [ 'one', 'two', 'three' ],
+                chunk => $chunk
+            },
+            [ 2, 3, 4, ],
+            $chunk,
+        ],
+        chunk => $chunk,
     };
 
     my $snap = bake( $data );
     # diag $snap;
     ok my $d = MyData->new( $data ), 'new';
-    # diag bake( $d );
     isa_ok $d, 'MyData';
+    can_ok $d, 'one';
+    can_ok $d, 'new';
     is $d->one,   1, 'one';
     is $d->two,   2, 'two';
     is $d->three, 3, 'three';
@@ -48,6 +61,24 @@ package main;
 
     is $d->hash->smaller, '>|<', 'smaller';
     is $d->hash->larger,  '< >', 'larger';
+    can_ok $d->hash, 'larger';
+
+    is $d->array( 0 ), 1, 'array -> scalar';
+    is $d->array( 3, 0 ), 2, 'array -> array -> scalar';
+    is $d->array( 2 )->here, 'there', 'array -> hash -> scalar';
+    is $d->array( 2, 'here' ), 'there', 'array -> hash -> scalar 2';
+    is $d->array( 2 )->array( 2 ), 'three',
+      'array -> hash -> array -> scalar';
+    is $d->array( 2, 'array', 2 ), 'three',
+      'array -> hash -> array -> scalar 2';
+
+    # Reused chunk
+    is $d->chunk->name, 'chunk', 'chunk';
+    is $d->chunk->hours( 1 ), 6, 'hours';
+    is $d->array( 4 )->name, 'chunk', 'chunk 2';
+    is $d->array( 4 )->hours( 1 ), 6, 'hours 2';
+    is $d->array( 2 )->chunk->name, 'chunk', 'chunk 3';
+    is $d->array( 2 )->chunk->hours( 1 ), 6, 'hours 3';
 
     is bake( $data ), $snap, 'data unmolested';
 
