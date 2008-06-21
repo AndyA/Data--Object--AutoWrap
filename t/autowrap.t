@@ -1,8 +1,9 @@
 #!perl
+# vim:ts=4:sw=4:et:ft=perl:
+
 use strict;
 use warnings;
 use Test::More tests => 29;
-use Test::Deep;
 use lib qw( t/lib );
 use Utils;
 
@@ -87,9 +88,4 @@ package main;
       'another list context';
 
     is bake( $data ), $snap, 'data unmolested';
-
-    # TODO: Why doesn't this work?
-    # cmp_deeply( $d, methods( one => 1, two => 2, three => 3 ) );
 }
-
-# vim:ts=4:sw=4:et:ft=perl:

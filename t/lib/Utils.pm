@@ -1,4 +1,5 @@
 package Utils;
+# vim:ts=4:sw=4:et:ft=perl:
 
 use strict;
 use warnings;

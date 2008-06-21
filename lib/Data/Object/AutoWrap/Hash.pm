@@ -1,4 +1,5 @@
 package Data::Object::AutoWrap::Hash;
+# vim:ts=4:sw=4:et:ft=perl:
 
 use warnings;
 use strict;
@@ -34,8 +35,6 @@ sub new {
 }
 
 1;
-
-# vim:ts=4:sw=4:et:ft=perl:
 
 __END__
 

@@ -1,4 +1,5 @@
 package Data::Object::AutoWrap;
+# vim:ts=4:sw=4:et:ft=perl:
 
 use warnings;
 use strict;
@@ -111,8 +112,6 @@ sub import {
 }
 
 1;
-
-# vim:ts=4:sw=4:et:ft=perl:
 
 __END__
 
