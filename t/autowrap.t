@@ -1,7 +1,7 @@
 #!perl
 use strict;
 use warnings;
-use Test::More tests => 27;
+use Test::More tests => 29;
 use Test::Deep;
 use lib qw( t/lib );
 use Utils;
@@ -79,6 +79,12 @@ package main;
     is $d->array( 4 )->hours( 1 ), 6, 'hours 2';
     is $d->array( 2 )->chunk->name, 'chunk', 'chunk 3';
     is $d->array( 2 )->chunk->hours( 1 ), 6, 'hours 3';
+
+    # List context
+    is_deeply [ $d->array( 3 ) ], [ 2, 3, 4 ],
+      'list context array accessor';
+    is_deeply [ $d->chunk->hours ], $chunk->{hours},
+      'another list context';
 
     is bake( $data ), $snap, 'data unmolested';
 

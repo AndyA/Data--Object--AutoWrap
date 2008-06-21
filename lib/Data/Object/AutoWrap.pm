@@ -53,7 +53,9 @@ sub _make_value_handler {
     elsif ( 'ARRAY' eq ref $value ) {
         return sub {
             my $self = shift;
-            croak "Array accessor needs an index"
+            return @$value
+              if wantarray && @_ == 0;
+            croak "Array accessor needs an index in scalar context"
               unless @_;
             my $idx = shift;
             return $class->_make_value_handler( $value->[$idx] )
@@ -63,7 +65,8 @@ sub _make_value_handler {
     else {
         return sub {
             my $self = shift;
-            croak "Scalar accessor doesn't take an argument" if @_;
+            croak "Scalar accessor takes no argument"
+              if @_;
             return $value;
         };
     }
