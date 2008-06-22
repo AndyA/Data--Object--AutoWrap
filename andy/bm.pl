@@ -23,6 +23,7 @@ my $data = { bar => 'is bar' };
 my $obj = MyData->new( $data );
 
 # Baseline: 880-900% slower
+#              1200% slower
 
 my $dummy;
 cmpthese(
