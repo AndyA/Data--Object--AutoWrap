@@ -10,7 +10,7 @@ eval 'use ExtUtils::MakeMaker::Coverage';
 WriteMakefile(
     ( MM->can( 'signature_target' ) ? ( SIGN => 1 ) : () ),
     NAME          => 'Data::Object::AutoWrap',
-    AUTHOR        => 'Andy Armstrong <andy@hexten.net>',
+    AUTHOR        => 'Andy Armstrong <andy.armstrong@messagesystems.com>',
     LICENSE       => 'perl',
     VERSION_FROM  => 'lib/Data/Object/AutoWrap.pm',
     ABSTRACT_FROM => 'lib/Data/Object/AutoWrap.pm',
