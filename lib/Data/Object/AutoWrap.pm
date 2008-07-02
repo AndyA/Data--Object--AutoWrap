@@ -1,5 +1,4 @@
 package Data::Object::AutoWrap;
-# vim:ts=4:sw=4:et:ft=perl:
 
 use warnings;
 use strict;
@@ -23,8 +22,22 @@ our $VERSION = '0.01';
 
 =head1 SYNOPSIS
 
-    use Data::Object::AutoWrap;
-  
+    package MyData;
+
+    # Our data is in $self->{data}
+    use Data::Object::AutoWrap qw( data );
+
+    sub new {
+        my ( $class, $data ) = @_;
+        bless { data => $data }, $class;
+    }
+
+    # ... and then later, elsewhere ...
+
+    my $d = MyData->new( { foo => 1, bar => [ 1, 2, 3 ] } );
+    print $d->foo;         # prints "1"
+    print $d->bar( 2 );    # prints "3"
+
 =head1 DESCRIPTION
 
 =head1 INTERFACE 
@@ -38,7 +51,6 @@ sub _make_value_handler {
         # attempts to use us.
         eval 'require Data::Object::AutoWrap::Hash';
         die $@ if $@;
-        # TODO: Just bless (a copy of) the hash?
         return sub {
             my $self = shift;
             if ( @_ ) {
@@ -91,7 +103,6 @@ sub import {
     *{"${pkg}::can"} = sub {
         my ( $self, $method ) = @_;
         my $data = $get_data->( $self );
-        # TODO: can inheritance is wrong
         return
           exists $data->{$method}
           ? $class->_make_value_handler( $data->{$method} )
@@ -173,3 +184,6 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
 LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+=cut
+# vim:ts=4:sw=4:et:ft=perl:
