@@ -14,11 +14,11 @@ Data::Object::AutoWrap - Autogenerate accessors for R/O object data
 
 =head1 VERSION
 
-This document describes Data::Object::AutoWrap version 0.01
+This document describes Data::Object::AutoWrap version 0.02
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 =head1 SYNOPSIS
 
