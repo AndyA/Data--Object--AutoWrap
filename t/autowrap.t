@@ -3,7 +3,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 29;
+use Test::More tests => 32;
 use lib qw( t/lib );
 use Utils;
 
@@ -39,7 +39,8 @@ package main;
             [ 2, 3, 4, ],
             $chunk,
         ],
-        chunk => $chunk,
+        chunk  => $chunk,
+        deeper => [ 'scalar', ['array'], { a => 'hash' } ],
     };
 
     my $snap = bake( $data );
@@ -86,6 +87,13 @@ package main;
       'list context array accessor';
     is_deeply [ $d->chunk->hours ], $chunk->{hours},
       'another list context';
+
+    my @deeper = $d->deeper;
+    # use Data::Dumper;
+    # diag Dumper( \@deeper );
+    is $deeper[0], 'scalar', 'scalar from list';
+    is_deeply $deeper[1], ['array'], 'array from list';
+    is $deeper[2]->a, 'hash', 'hash from list';
 
     is bake( $data ), $snap, 'data unmolested';
 }
