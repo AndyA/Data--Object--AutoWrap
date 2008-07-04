@@ -40,7 +40,7 @@ our $VERSION = '0.02';
 
 =head1 DESCRIPTION
 
-This is an experimental object designed to simplify the implementation
+This is an experimental module designed to simplify the implementation
 of read-only objects with value semantics.
 
 Objects created using C<Data::Objects::AutoWrap> are bound to a Perl
