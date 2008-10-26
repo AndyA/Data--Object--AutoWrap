@@ -185,88 +185,88 @@ This can probably be improved.
 =cut
 
 sub _make_value_handler {
-    my ( $class, $value ) = @_;
-    if ( 'HASH' eq ref $value ) {
-        # Delay loading so we're compiled before wrapper
-        # attempts to use us.
-        eval 'require Data::Object::AutoWrap::Hash';
-        die $@ if $@;
-        return sub {
-            my $self = shift;
-            if ( @_ ) {
-                my $key = shift;
-                return $class->_make_value_handler( $value->{$key} )
-                  ->( $self, @_ );
-            }
-            else {
-                return Data::Object::AutoWrap::Hash->new( $value );
-            }
-        };
-    }
-    elsif ( 'ARRAY' eq ref $value ) {
-        return sub {
-            my $self = shift;
-            # Special case for ARRAY refs because we can't turn an array
-            # ref into an object with an accessor; array items are
-            # always accessed by subscripting into the parent object.
-            return map {
-                'ARRAY' eq ref $_
-                  ? $_
-                  : $class->_make_value_handler( $_ )->( $self )
-              } @$value
-              if wantarray && @_ == 0;
-            croak "Array accessor needs an index in scalar context"
-              unless @_;
-            my $idx = shift;
-            return $class->_make_value_handler( $value->[$idx] )
-              ->( $self, @_ );
-        };
-    }
-    else {
-        return sub {
-            my $self = shift;
-            croak "Scalar accessor takes no argument"
-              if @_;
-            return $value;
-        };
-    }
+  my ( $class, $value ) = @_;
+  if ( 'HASH' eq ref $value ) {
+    # Delay loading so we're compiled before wrapper
+    # attempts to use us.
+    eval 'require Data::Object::AutoWrap::Hash';
+    die $@ if $@;
+    return sub {
+      my $self = shift;
+      if ( @_ ) {
+        my $key = shift;
+        return $class->_make_value_handler( $value->{$key} )
+         ->( $self, @_ );
+      }
+      else {
+        return Data::Object::AutoWrap::Hash->new( $value );
+      }
+    };
+  }
+  elsif ( 'ARRAY' eq ref $value ) {
+    return sub {
+      my $self = shift;
+      # Special case for ARRAY refs because we can't turn an array
+      # ref into an object with an accessor; array items are
+      # always accessed by subscripting into the parent object.
+      return map {
+        'ARRAY' eq ref $_
+         ? $_
+         : $class->_make_value_handler( $_ )->( $self )
+       } @$value
+       if wantarray && @_ == 0;
+      croak "Array accessor needs an index in scalar context"
+       unless @_;
+      my $idx = shift;
+      return $class->_make_value_handler( $value->[$idx] )
+       ->( $self, @_ );
+    };
+  }
+  else {
+    return sub {
+      my $self = shift;
+      croak "Scalar accessor takes no argument"
+       if @_;
+      return $value;
+    };
+  }
 }
 
 sub import {
-    my $class = shift;
-    my $pkg   = caller;
+  my $class = shift;
+  my $pkg   = caller;
 
-    my $get_data;
-    if ( @_ ) {
-        my $field = shift;
-        # TODO: Allow a closure here so objects can be promises
-        $get_data = sub { shift->{$field} };
+  my $get_data;
+  if ( @_ ) {
+    my $field = shift;
+    # TODO: Allow a closure here so objects can be promises
+    $get_data = sub { shift->{$field} };
+  }
+  else {
+    $get_data = sub { shift };
+  }
+
+  no strict 'refs';
+  *{"${pkg}::can"} = sub {
+    my ( $self, $method ) = @_;
+    my $data = $get_data->( $self );
+    return
+     exists $data->{$method}
+     ? $class->_make_value_handler( $data->{$method} )
+     : $pkg->SUPER::can( $method );
+  };
+
+  our $AUTOLOAD;
+  *{"${pkg}::AUTOLOAD"} = sub {
+    my $self = shift;
+    ( my $field = $AUTOLOAD ) =~ s/.*://;
+    return if $field eq 'DESTROY';
+    if ( my $code = $self->can( $field ) ) {
+      return $self->$code( @_ );
     }
-    else {
-        $get_data = sub { shift };
-    }
 
-    no strict 'refs';
-    *{"${pkg}::can"} = sub {
-        my ( $self, $method ) = @_;
-        my $data = $get_data->( $self );
-        return
-          exists $data->{$method}
-          ? $class->_make_value_handler( $data->{$method} )
-          : $pkg->SUPER::can( $method );
-    };
-
-    our $AUTOLOAD;
-    *{"${pkg}::AUTOLOAD"} = sub {
-        my $self = shift;
-        ( my $field = $AUTOLOAD ) =~ s/.*://;
-        return if $field eq 'DESTROY';
-        if ( my $code = $self->can( $field ) ) {
-            return $self->$code( @_ );
-        }
-
-        confess "Undefined subroutine &$AUTOLOAD called";
-    };
+    confess "Undefined subroutine &$AUTOLOAD called";
+  };
 }
 
 1;

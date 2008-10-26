@@ -29,8 +29,8 @@ our $VERSION = '0.02';
 =cut
 
 sub new {
-    my ( $class, $data ) = @_;
-    bless { data => $data }, $class;
+  my ( $class, $data ) = @_;
+  bless { data => $data }, $class;
 }
 
 1;
