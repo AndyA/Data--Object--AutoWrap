@@ -43,7 +43,7 @@ package main;
     deeper => [ 'scalar', ['array'], { a => 'hash' } ],
   };
 
-  my $snap = bake( $data );
+  my $snap = bake $data;
   # diag $snap;
   ok my $d = MyData->new( $data ), 'new';
   isa_ok $d, 'MyData';
@@ -95,5 +95,5 @@ package main;
   is_deeply $deeper[1], ['array'], 'array from list';
   is $deeper[2]->a, 'hash', 'hash from list';
 
-  is bake( $data ), $snap, 'data unmolested';
+  is bake $data, $snap, 'data unmolested';
 }

@@ -16,7 +16,7 @@ sub enc($) {
   return $sc;
 }
 
-sub bake {
+sub bake($) {
   my $thing = shift;
   if ( my $ref = ref $thing ) {
     my @rep = qq{"$ref"=} . refaddr $thing;
