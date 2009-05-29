@@ -1,7 +1,8 @@
+Build.PL
 Changes
+inc/MyBuilder.pm
 lib/Data/Object/AutoWrap.pm
 lib/Data/Object/AutoWrap/Hash.pm
-Makefile.PL
 MANIFEST
 README
 t/00.load.t
