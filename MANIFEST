@@ -10,3 +10,4 @@ t/autowrap.t
 t/lib/Utils.pm
 t/pod-coverage.t
 t/pod.t
+META.yml
